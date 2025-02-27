@@ -1,5 +1,6 @@
 package com.jojo.mybatis.design.proxy._01;
 
+// 静态代理
 public class UserProxy implements UserService{
     private UserService userService;
 
