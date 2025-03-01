@@ -1,4 +1,4 @@
-package com.jojo.mybatis.demo.entity;
+package demo.entity;
 
 // 用户实体类
 public class User {

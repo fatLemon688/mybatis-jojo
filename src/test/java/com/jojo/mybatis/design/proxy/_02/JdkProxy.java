@@ -1,9 +1,9 @@
 package com.jojo.mybatis.design.proxy._02;
 
-import net.sf.cglib.proxy.InvocationHandler;
-import net.sf.cglib.proxy.Proxy;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 // jdk动态代理
 public class JdkProxy implements InvocationHandler {

@@ -1,7 +1,8 @@
 package com.jojo.mybatis;
 
-import com.jojo.mybatis.demo.entity.User;
-import com.jojo.mybatis.demo.mapper.UserMapper;
+import com.jojo.mybatis.binding.MapperProxyFactory;
+import demo.entity.User;
+import demo.mapper.UserMapper;
 import org.junit.Test;
 
 import java.util.List;
@@ -10,8 +11,8 @@ import java.util.List;
 public class TestApp {
     @Test
     public void test() throws Exception {
-        UserMapper userMapper = UserMapper.class.newInstance();
-        List<User> users = userMapper.selectList();
+        UserMapper userMapper = MapperProxyFactory.getProxy(UserMapper.class);
+        List<User> users = userMapper.selectList(1, "jojo");
         System.out.println(users);
     }
 }
