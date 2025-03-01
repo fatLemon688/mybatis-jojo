@@ -2,6 +2,8 @@ package com.jojo.mybatis.parsing;
 
 import cn.hutool.core.util.StrUtil;
 
+import java.util.List;
+
 // 解析sql
 // 把select * from t_user where id = #{id} and name = #{name}
 // 转成select * from t_user where id = ? and name = ?
@@ -11,9 +13,12 @@ public class GenericTokenParser {
     // 结束标志---}
     private String closeToken;
 
-    public GenericTokenParser(String openToken, String closeToken) {
+    private TokenHandler tokenHandler;
+
+    public GenericTokenParser(String openToken, String closeToken, TokenHandler tokenHandler) {
         this.openToken = openToken;
         this.closeToken = closeToken;
+        this.tokenHandler = tokenHandler;
     }
 
     private String parse(String text) {
@@ -41,8 +46,7 @@ public class GenericTokenParser {
                 result.append(charArray, offset, start - offset);
                 offset = start + openToken.length();
                 String param = new String(charArray, offset, end - offset);
-                System.out.println(param);
-                result.append("?");
+                result.append(tokenHandler.handleToken(param));
                 offset = end + closeToken.length();
             }
             start = text.indexOf(openToken, offset);
@@ -54,8 +58,12 @@ public class GenericTokenParser {
     }
 
     public static void main(String[] args) {
-        GenericTokenParser parser = new GenericTokenParser("#{", "}");
+        ParameterMappingTokenHandler parameterMappingTokenHandler = new ParameterMappingTokenHandler();
+        GenericTokenParser parser = new GenericTokenParser("#{", "}", parameterMappingTokenHandler);
         String result = parser.parse("select * from t_user where id = #{id} and name = #{name}");
         System.out.println(result);
+
+        List<String> parameterMappings = parameterMappingTokenHandler.getParameterMappings();
+        System.out.println(parameterMappings);
     }
 }
