@@ -16,6 +16,7 @@ public class ParameterMappingTokenHandler implements TokenHandler{
     }
     @Override
     public String handleToken(String content) {
+        // parameterMappings这个List:使字段顺序跟字段名绑定
         parameterMappings.add(content);
         return "?";
     }
