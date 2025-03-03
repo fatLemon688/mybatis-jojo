@@ -1,5 +1,7 @@
 package com.jojo.mybatis.binding;
 
+import cn.hutool.core.util.ReflectUtil;
+import com.google.common.collect.Lists;
 import com.jojo.mybatis.annotations.Param;
 import com.jojo.mybatis.annotations.Select;
 import com.jojo.mybatis.parsing.GenericTokenParser;
@@ -78,8 +80,22 @@ public class MapperProxy implements InvocationHandler {
 
         // 拿到结果集
         ResultSet rs = ps.getResultSet();
+        // 把ResultSet里的每一条数据转成User对象存到list
+
+        // 拿到sql返回字段名称
+        List nameList = Lists.newArrayList();
+        ResultSetMetaData metaData = rs.getMetaData();
+        for (int i = 0; i < metaData.getColumnCount(); i++) {
+            nameList.add(metaData.getColumnName(i + 1));
+        }
+
+        List instanceList = Lists.newArrayList();
         while (rs.next()) {
-            System.out.println(rs.getString("name") + " -- " + rs.getInt("age"));
+            //System.out.println(rs.getString("name") + " -- " + rs.getInt("age"));
+            Object instance = returnType.newInstance();
+            ReflectUtil.setFieldValue(instance, "", null);
+
+            instanceList.add(instance);
         }
         // 释放资源
         rs.close();
