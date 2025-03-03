@@ -14,5 +14,7 @@ public class TestApp {
         UserMapper userMapper = MapperProxyFactory.getProxy(UserMapper.class);
         List<User> users = userMapper.selectList(1, "jojo");
         System.out.println(users);
+        /*User user = userMapper.selectOne(2);
+        System.out.println(user);*/
     }
 }

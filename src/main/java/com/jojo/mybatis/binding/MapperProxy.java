@@ -12,6 +12,8 @@ import lombok.SneakyThrows;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +66,15 @@ public class MapperProxy implements InvocationHandler {
             typeHandlerMap.get(val.getClass()).setParameter(ps, i + 1, val);
         }
         ps.execute();
+
+        // 拿到mapper的返回类型
+        Class returnType = null;
+        Type genericReturnType = method.getGenericReturnType();
+        if (genericReturnType instanceof ParameterizedType) {
+            returnType = (Class) ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
+        } else if (genericReturnType instanceof Class) {
+            returnType = (Class) genericReturnType;
+        }
 
         // 拿到结果集
         ResultSet rs = ps.getResultSet();
