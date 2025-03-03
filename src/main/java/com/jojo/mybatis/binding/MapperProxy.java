@@ -11,6 +11,7 @@ import com.jojo.mybatis.type.StringTypeHandler;
 import com.jojo.mybatis.type.TypeHandler;
 import lombok.SneakyThrows;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -83,25 +84,28 @@ public class MapperProxy implements InvocationHandler {
         // 把ResultSet里的每一条数据转成User对象存到list
 
         // 拿到sql返回字段名称
-        List nameList = Lists.newArrayList();
+        List<String> columnList = Lists.newArrayList();
         ResultSetMetaData metaData = rs.getMetaData();
         for (int i = 0; i < metaData.getColumnCount(); i++) {
-            nameList.add(metaData.getColumnName(i + 1));
+            columnList.add(metaData.getColumnName(i + 1));
         }
 
         List instanceList = Lists.newArrayList();
         while (rs.next()) {
-            //System.out.println(rs.getString("name") + " -- " + rs.getInt("age"));
+            // 结果映射
             Object instance = returnType.newInstance();
-            ReflectUtil.setFieldValue(instance, "", null);
-
+            for (String columnName : columnList) {
+                Field field = ReflectUtil.getField(returnType, columnName);
+                Object value = typeHandlerMap.get(field.getType()).getResult(rs, columnName);
+                ReflectUtil.setFieldValue(instance, columnName, value);
+            }
             instanceList.add(instance);
         }
         // 释放资源
         rs.close();
         ps.close();
         connection.close();
-        return null;
+        return instanceList;
     }
 
     @SneakyThrows
