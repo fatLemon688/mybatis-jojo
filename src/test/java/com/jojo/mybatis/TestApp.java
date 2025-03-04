@@ -2,8 +2,9 @@ package com.jojo.mybatis;
 
 import cn.hutool.json.JSONUtil;
 import com.jojo.mybatis.binding.MapperProxyFactory;
-import demo.entity.User;
-import demo.mapper.UserMapper;
+import com.jojo.demo.entity.User;
+import com.jojo.demo.mapper.UserMapper;
+import com.jojo.mybatis.builder.XMLConfigBuilder;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,6 +13,9 @@ import java.util.List;
 public class TestApp {
     @Test
     public void test() throws Exception {
+        XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder();
+        xmlConfigBuilder.parse();
+
         UserMapper userMapper = MapperProxyFactory.getProxy(UserMapper.class);
         List<User> users = userMapper.selectList(1, "jojo");
         System.out.println(JSONUtil.toJsonStr(users));

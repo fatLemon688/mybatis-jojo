@@ -1,8 +1,8 @@
-package demo.mapper;
+package com.jojo.demo.mapper;
 
 import com.jojo.mybatis.annotations.Param;
 import com.jojo.mybatis.annotations.Select;
-import demo.entity.User;
+import com.jojo.demo.entity.User;
 
 import java.util.List;
 
