@@ -3,9 +3,10 @@ package com.jojo.mybatis.binding;
 import cn.hutool.core.util.ReflectUtil;
 import com.google.common.collect.Lists;
 import com.jojo.mybatis.annotations.Param;
-import com.jojo.mybatis.annotations.Select;
+import com.jojo.mybatis.mapping.MappedStatement;
 import com.jojo.mybatis.parsing.GenericTokenParser;
 import com.jojo.mybatis.parsing.ParameterMappingTokenHandler;
+import com.jojo.mybatis.session.Configuration;
 import com.jojo.mybatis.type.IntegerTypeHandler;
 import com.jojo.mybatis.type.StringTypeHandler;
 import com.jojo.mybatis.type.TypeHandler;
@@ -27,7 +28,13 @@ public class MapperProxy implements InvocationHandler {
 
     private Map<Class, TypeHandler> typeHandlerMap = new HashMap<>();
 
-    public MapperProxy() {
+    private Configuration configuration;
+    
+    private Class mapperClass;
+
+    public MapperProxy(Configuration configuration, Class mapperClass) {
+        this.configuration = configuration;
+        this.mapperClass = mapperClass;
         this.typeHandlerMap.put(Integer.class, new IntegerTypeHandler());
         this.typeHandlerMap.put(String.class, new StringTypeHandler());
     }
@@ -36,9 +43,9 @@ public class MapperProxy implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Connection connection = getConnection();
 
+        MappedStatement ms = configuration.getMappedStatement(mapperClass.getName()+ "." + method.getName());
         // 拿到sql
-        Select select = method.getAnnotation(Select.class);
-        String originalSql = select.value();
+        String originalSql = ms.getSql();
 
         ParameterMappingTokenHandler tokenHandler = new ParameterMappingTokenHandler();
         GenericTokenParser parser = new GenericTokenParser("#{", "}", tokenHandler);
@@ -71,13 +78,7 @@ public class MapperProxy implements InvocationHandler {
         ps.execute();
 
         // 拿到mapper的返回类型
-        Class returnType = null;
-        Type genericReturnType = method.getGenericReturnType();
-        if (genericReturnType instanceof ParameterizedType) {
-            returnType = (Class) ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
-        } else if (genericReturnType instanceof Class) {
-            returnType = (Class) genericReturnType;
-        }
+        Class returnType = ms.getReturnType();
 
         // 拿到结果集
         ResultSet rs = ps.getResultSet();
