@@ -5,7 +5,7 @@ import com.jojo.demo.entity.User;
 import com.jojo.demo.mapper.UserMapper;
 import com.jojo.mybatis.builder.XMLConfigBuilder;
 import com.jojo.mybatis.session.Configuration;
-import com.jojo.mybatis.session.DefaultSqlSession;
+import com.jojo.mybatis.session.defaults.DefaultSqlSessionFactory;
 import com.jojo.mybatis.session.SqlSession;
 import org.junit.Test;
 
@@ -17,7 +17,8 @@ public class TestApp {
     public void test() throws Exception {
         XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder();
         Configuration configuration = xmlConfigBuilder.parse();
-        SqlSession sqlSession = new DefaultSqlSession(configuration.newExecutor(), configuration);
+        DefaultSqlSessionFactory sessionFactory = new DefaultSqlSessionFactory(configuration);
+        SqlSession sqlSession = sessionFactory.openSession();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         List<User> users = userMapper.selectList(1, "jojo");
         System.out.println(JSONUtil.toJsonStr(users));

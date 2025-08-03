@@ -1,15 +1,17 @@
-package com.jojo.mybatis.session;
+package com.jojo.mybatis.session.defaults;
 
 import com.jojo.mybatis.binding.MapperProxyFactory;
 import com.jojo.mybatis.executor.Executor;
 import com.jojo.mybatis.mapping.MappedStatement;
+import com.jojo.mybatis.session.Configuration;
+import com.jojo.mybatis.session.SqlSession;
 
 import java.util.List;
 
 /**
  * 默认的SqlSession
  */
-public class DefaultSqlSession implements SqlSession{
+public class DefaultSqlSession implements SqlSession {
     private Executor executor;
 
     private Configuration configuration;
