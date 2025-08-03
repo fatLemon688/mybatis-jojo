@@ -15,4 +15,6 @@ public interface SqlSession {
     <T> T selectOne(String statementId, Object parameter);
 
     <T> List<T> selectList(String statementId, Object parameter);
+
+    <T> T getMapper(Class<T> mapper);
 }

@@ -1,7 +1,6 @@
 package com.jojo.mybatis.binding;
 
-
-import com.jojo.mybatis.session.Configuration;
+import com.jojo.mybatis.session.SqlSession;
 
 import java.lang.reflect.Proxy;
 
@@ -13,7 +12,7 @@ public class MapperProxyFactory {
      * 第三个参数：实现InvocationHandler接口
      *
      */
-    public static <T> T getProxy(Class<T> mapperClass, Configuration configuration) {
-        return (T) Proxy.newProxyInstance(mapperClass.getClassLoader(), new Class[]{mapperClass}, new MapperProxy(configuration, mapperClass));
+    public static <T> T getProxy(Class<T> mapperClass, SqlSession sqlSession) {
+        return (T) Proxy.newProxyInstance(mapperClass.getClassLoader(), new Class[]{mapperClass}, new MapperProxy(sqlSession, mapperClass));
     }
 }

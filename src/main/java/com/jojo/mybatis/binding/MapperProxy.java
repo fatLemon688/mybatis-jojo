@@ -1,9 +1,7 @@
 package com.jojo.mybatis.binding;
 
 import com.jojo.mybatis.annotations.Param;
-import com.jojo.mybatis.executor.Executor;
-import com.jojo.mybatis.mapping.MappedStatement;
-import com.jojo.mybatis.session.Configuration;
+import com.jojo.mybatis.session.SqlSession;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.InvocationHandler;
@@ -16,12 +14,12 @@ import java.util.Map;
 // mapper代理
 public class MapperProxy implements InvocationHandler {
 
-    private Configuration configuration;
+    private SqlSession sqlSession;
     
     private Class mapperClass;
 
-    public MapperProxy(Configuration configuration, Class mapperClass) {
-        this.configuration = configuration;
+    public MapperProxy(SqlSession sqlSession, Class mapperClass) {
+        this.sqlSession = sqlSession;
         this.mapperClass = mapperClass;
     }
 
@@ -37,9 +35,8 @@ public class MapperProxy implements InvocationHandler {
             paramValueMap.put(paramName, args[i]);
         }
 
-        Executor executor = configuration.newExecutor();
-        MappedStatement ms = configuration.getMappedStatement(mapperClass.getName()+ "." + method.getName());
-        return executor.query(ms, paramValueMap);
+        String statementId = mapperClass.getName()+ "." + method.getName();
+        return sqlSession.selectList(statementId, paramValueMap);
     }
 
     @SneakyThrows

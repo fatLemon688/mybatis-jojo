@@ -1,5 +1,6 @@
 package com.jojo.mybatis.session;
 
+import com.jojo.mybatis.binding.MapperProxyFactory;
 import com.jojo.mybatis.executor.Executor;
 import com.jojo.mybatis.mapping.MappedStatement;
 
@@ -52,5 +53,10 @@ public class DefaultSqlSession implements SqlSession{
     public <T> List<T> selectList(String statementId, Object parameter) {
         MappedStatement ms = configuration.getMappedStatement(statementId);
         return executor.query(ms, parameter);
+    }
+
+    @Override
+    public <T> T getMapper(Class<T> mapper) {
+        return MapperProxyFactory.getProxy(mapper, this);
     }
 }
