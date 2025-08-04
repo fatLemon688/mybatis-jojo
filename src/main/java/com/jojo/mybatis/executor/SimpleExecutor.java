@@ -36,13 +36,13 @@ public class SimpleExecutor implements Executor{
         // 拿到sql
         String originalSql = ms.getSql();
 
+        // jdbc里#{}替换规则：#{}---->?
         ParameterMappingTokenHandler tokenHandler = new ParameterMappingTokenHandler();
         GenericTokenParser parser = new GenericTokenParser("#{", "}", tokenHandler);
         String sql = parser.parse(originalSql);
 
 
         // 构建sql和执行sql
-        // jdbc里#{}替换规则：#{}---->?
         PreparedStatement ps = connection.prepareStatement(sql);
 
         Map<Class, TypeHandler> typeHandlerMap = configuration.getTypeHandlerMap();
@@ -100,13 +100,13 @@ public class SimpleExecutor implements Executor{
         // 拿到sql
         String originalSql = ms.getSql();
 
+        // jdbc里#{}替换规则：#{}---->?
         ParameterMappingTokenHandler tokenHandler = new ParameterMappingTokenHandler();
         GenericTokenParser parser = new GenericTokenParser("#{", "}", tokenHandler);
         String sql = parser.parse(originalSql);
 
 
         // 构建sql和执行sql
-        // jdbc里#{}替换规则：#{}---->?
         PreparedStatement ps = connection.prepareStatement(sql);
 
         Map<Class, TypeHandler> typeHandlerMap = configuration.getTypeHandlerMap();
