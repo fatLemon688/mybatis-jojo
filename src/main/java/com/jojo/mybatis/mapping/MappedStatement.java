@@ -20,4 +20,7 @@ public class MappedStatement {
 
     // 返回类型
     private Class returnType;
+
+    // SQL命令类型
+    private SqlCommandType sqlCommandType;
 }

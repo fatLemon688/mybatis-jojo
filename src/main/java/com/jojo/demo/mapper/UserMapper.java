@@ -1,8 +1,11 @@
 package com.jojo.demo.mapper;
 
+import com.jojo.mybatis.annotations.Delete;
+import com.jojo.mybatis.annotations.Insert;
 import com.jojo.mybatis.annotations.Param;
 import com.jojo.mybatis.annotations.Select;
 import com.jojo.demo.entity.User;
+import com.jojo.mybatis.annotations.Update;
 
 import java.util.List;
 
@@ -15,4 +18,13 @@ public interface UserMapper {
 
     @Select("select * from t_user where id = #{id}")
     User selectOne(@Param("id")Integer id);
+
+    @Insert("insert into t_user(id, name, age) values(#{user.id}, #{user.name}, #{user.age})")
+    Integer insert(@Param("user") User user);
+
+    @Delete("delete * from t_user where id = #{id}")
+    Integer delete(@Param("id")Integer id);
+
+    @Update("update t_user set name = #{name} where id = #{id}")
+    Integer update(@Param("id")Integer id, @Param("name")String name);
 }
