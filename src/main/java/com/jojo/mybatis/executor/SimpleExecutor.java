@@ -92,9 +92,44 @@ public class SimpleExecutor implements Executor{
         return instanceList;
     }
 
+    @SneakyThrows
     @Override
     public int update(MappedStatement ms, Object parameter) {
-        return 0;
+        Connection connection = getConnection();
+
+        // 拿到sql
+        String originalSql = ms.getSql();
+
+        ParameterMappingTokenHandler tokenHandler = new ParameterMappingTokenHandler();
+        GenericTokenParser parser = new GenericTokenParser("#{", "}", tokenHandler);
+        String sql = parser.parse(originalSql);
+
+
+        // 构建sql和执行sql
+        // jdbc里#{}替换规则：#{}---->?
+        PreparedStatement ps = connection.prepareStatement(sql);
+
+        Map<Class, TypeHandler> typeHandlerMap = configuration.getTypeHandlerMap();
+
+        //设置值
+        Map<String, Object> paramValueMap = (Map<String, Object>) parameter;
+        List<String> parameterMappings = tokenHandler.getParameterMappings();
+        for (int i = 0; i < parameterMappings.size(); i++) {
+            // parameterMappings这个List:使字段顺序跟字段名绑定
+            // paramValueMap:使字段名跟字段值绑定
+            // 这样能使字段顺序跟字段值对应上，再使用PreparedStatement来设置值
+            String columName = parameterMappings.get(i);
+            Object val = paramValueMap.get(columName);
+            typeHandlerMap.get(val.getClass()).setParameter(ps, i + 1, val);
+        }
+        ps.execute();
+
+        // 拿到操作数
+        int updateCount = ps.getUpdateCount();
+        // 释放资源
+        ps.close();
+        connection.close();
+        return updateCount;
     }
 
     @SneakyThrows

@@ -19,10 +19,10 @@ public interface UserMapper {
     @Select("select * from t_user where id = #{id}")
     User selectOne(@Param("id")Integer id);
 
-    @Insert("insert into t_user(id, name, age) values(#{user.id}, #{user.name}, #{user.age})")
+    @Insert("insert into t_user(name, age) values(#{user.name}, #{user.age})")
     Integer insert(@Param("user") User user);
 
-    @Delete("delete * from t_user where id = #{id}")
+    @Delete("delete from t_user where id = #{id}")
     Integer delete(@Param("id")Integer id);
 
     @Update("update t_user set name = #{name} where id = #{id}")
