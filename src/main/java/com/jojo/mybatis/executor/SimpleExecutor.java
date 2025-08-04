@@ -119,8 +119,18 @@ public class SimpleExecutor implements Executor{
             // paramValueMap:使字段名跟字段值绑定
             // 这样能使字段顺序跟字段值对应上，再使用PreparedStatement来设置值
             String columName = parameterMappings.get(i);
-            Object val = paramValueMap.get(columName);
-            typeHandlerMap.get(val.getClass()).setParameter(ps, i + 1, val);
+            if (columName.contains(".")) {
+                String[] split = columName.split("\\.");
+                String key = split[0];
+                Object instanceVal = paramValueMap.get(key);
+                String fieldName = split[1];
+                Object fieldValue = ReflectUtil.getFieldValue(instanceVal, fieldName);
+                typeHandlerMap.get(fieldValue.getClass()).setParameter(ps, i + 1, fieldValue);
+            } else {
+                Object val = paramValueMap.get(columName);
+                typeHandlerMap.get(val.getClass()).setParameter(ps, i + 1, val);
+            }
+
         }
         ps.execute();
 
