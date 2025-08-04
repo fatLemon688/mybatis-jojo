@@ -1,6 +1,8 @@
 package com.jojo.mybatis.binding;
 
 import com.jojo.mybatis.annotations.Param;
+import com.jojo.mybatis.mapping.MappedStatement;
+import com.jojo.mybatis.mapping.SqlCommandType;
 import com.jojo.mybatis.session.SqlSession;
 import lombok.SneakyThrows;
 
@@ -24,7 +26,7 @@ public class MapperProxy implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) {
         // 获取mapper方法对应的（参数名 ---> 参数值）
         Map<String, Object> paramValueMap = new HashMap<>();
         Parameter[] parameters = method.getParameters();
@@ -36,7 +38,25 @@ public class MapperProxy implements InvocationHandler {
         }
 
         String statementId = mapperClass.getName()+ "." + method.getName();
-        return sqlSession.selectList(statementId, paramValueMap);
+        MappedStatement ms = sqlSession.getConfiguration().getMappedStatement(statementId);
+        SqlCommandType sqlCommandType = ms.getSqlCommandType();
+        switch (sqlCommandType) {
+            case INSERT:
+                return sqlSession.insert(statementId, paramValueMap);
+            case DELETE:
+                return sqlSession.delete(statementId, paramValueMap);
+            case UPDATE:
+                return sqlSession.update(statementId, paramValueMap);
+            case SELECT:
+                if (ms.getIsSelectMany()) {
+                    return sqlSession.selectList(statementId, paramValueMap);
+                } else {
+                    return sqlSession.selectOne(statementId, paramValueMap);
+                }
+            default:
+                break;
+        }
+        return null;
     }
 
     @SneakyThrows

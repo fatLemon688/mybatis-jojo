@@ -23,4 +23,7 @@ public class MappedStatement {
 
     // SQL命令类型
     private SqlCommandType sqlCommandType;
+
+    // 是否查询多条数据
+    private Boolean isSelectMany;
 }
