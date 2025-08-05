@@ -42,11 +42,11 @@ public class MapperProxy implements InvocationHandler {
         SqlCommandType sqlCommandType = ms.getSqlCommandType();
         switch (sqlCommandType) {
             case INSERT:
-                return sqlSession.insert(statementId, paramValueMap);
+                return convertResult(ms, sqlSession.insert(statementId, paramValueMap));
             case DELETE:
-                return sqlSession.delete(statementId, paramValueMap);
+                return convertResult(ms, sqlSession.delete(statementId, paramValueMap));
             case UPDATE:
-                return sqlSession.update(statementId, paramValueMap);
+                return convertResult(ms, sqlSession.update(statementId, paramValueMap));
             case SELECT:
                 if (ms.getIsSelectMany()) {
                     return sqlSession.selectList(statementId, paramValueMap);
@@ -67,5 +67,17 @@ public class MapperProxy implements InvocationHandler {
         return DriverManager
                 .getConnection("jdbc:mysql://127.0.0.1:3306/mybatis-jojo?useSSL=false",
                         "root", "Hu468502553");
+    }
+
+    private Object convertResult(MappedStatement ms, int updateCount) {
+        Class returnType = ms.getReturnType();
+        if (returnType == int.class || returnType == Integer.class) {
+            return updateCount;
+        } else if (returnType == Long.class) {
+            return Long.valueOf(updateCount);
+        } else if (returnType == void.class) {
+            return null;
+        }
+        return null;
     }
 }
