@@ -1,10 +1,12 @@
 package com.jojo.mybatis.plugin;
 
+import com.jojo.mybatis.executor.Executor;
 import com.jojo.mybatis.mapping.MappedStatement;
 
 /**
  *  分页插件
  */
+@Intercepts({@Signature(type = Executor.class, method = "query")})
 public class LimitInterceptor implements Interceptor{
     @Override
     public Object intercept(Invocation invocation) {
