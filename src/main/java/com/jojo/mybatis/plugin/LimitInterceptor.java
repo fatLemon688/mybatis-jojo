@@ -9,6 +9,6 @@ public class LimitInterceptor implements Interceptor{
         System.out.println("分页插件start");
         Object result = invocation.proceed();
         System.out.println("分页插件end");
-        return result;
+        return result + "111";
     }
 }

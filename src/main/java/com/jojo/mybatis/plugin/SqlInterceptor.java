@@ -9,6 +9,6 @@ public class SqlInterceptor implements Interceptor{
         System.out.println("SQL插件start");
         Object result = invocation.proceed();
         System.out.println("SQL插件end");
-        return result;
+        return result + "222";
     }
 }

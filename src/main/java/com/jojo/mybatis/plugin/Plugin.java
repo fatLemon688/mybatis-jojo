@@ -11,25 +11,19 @@ import java.util.List;
 public class Plugin implements InvocationHandler {
     private Object target;
 
-    private List<Interceptor> interceptorList;
+    private Interceptor interceptor;
 
-    public Plugin(Object target, List<Interceptor> interceptorList) {
+    public Plugin(Object target, Interceptor interceptor) {
         this.target = target;
-        this.interceptorList = interceptorList;
+        this.interceptor = interceptor;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        System.out.println("before method...");
-        for (Interceptor interceptor : interceptorList) {
-            // 遇事不决，抽成对象
-            interceptor.intercept(new Invocation(target, method, args));
-        }
-        System.out.println("after method...");
-        return "1";
+        return interceptor.intercept(new Invocation(target, method, args));
     }
 
-    public static  <T> T warp(T target, List<Interceptor> interceptorList) {
-        return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), new Plugin(target, interceptorList));
+    public static  <T> T warp(T target, Interceptor interceptor) {
+        return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), new Plugin(target, interceptor));
     }
 }

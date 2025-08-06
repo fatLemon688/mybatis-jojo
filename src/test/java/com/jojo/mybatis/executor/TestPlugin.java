@@ -10,10 +10,8 @@ import org.junit.Test;
 public class TestPlugin {
     @Test
     public void test() throws Exception {
-        UserService warp = Plugin.warp(new UserServiceImpl(), Lists.newArrayList(
-                new LimitInterceptor(),
-                new SqlInterceptor()
-        ));
-        System.out.println(warp.selectOne("xxx"));
+        UserService warp = Plugin.warp(new UserServiceImpl(), new LimitInterceptor());
+        UserService warp2 = Plugin.warp(warp, new SqlInterceptor());
+        System.out.println(warp2.selectOne("xxx"));
     }
 }
