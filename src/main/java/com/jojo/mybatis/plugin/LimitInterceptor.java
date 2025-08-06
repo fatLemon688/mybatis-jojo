@@ -6,7 +6,12 @@ import com.jojo.mybatis.mapping.MappedStatement;
 /**
  *  分页插件
  */
-@Intercepts({@Signature(type = Executor.class, method = "query")})
+@Intercepts({
+        @Signature(
+                type = Executor.class,
+                method = "query",
+                args = {MappedStatement.class, Object.class})
+})
 public class LimitInterceptor implements Interceptor{
     @Override
     public Object intercept(Invocation invocation) {
