@@ -11,4 +11,9 @@ public class LimitInterceptor implements Interceptor{
         System.out.println("分页插件end");
         return result + "111";
     }
+
+    @Override
+    public <T> T plugin(Object target) {
+        return Plugin.warp(target, this);
+    }
 }

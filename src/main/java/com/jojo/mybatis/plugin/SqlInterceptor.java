@@ -11,4 +11,9 @@ public class SqlInterceptor implements Interceptor{
         System.out.println("SQL插件end");
         return result + "222";
     }
+
+    @Override
+    public <T> T plugin(Object target) {
+        return Plugin.warp(target, this);
+    }
 }

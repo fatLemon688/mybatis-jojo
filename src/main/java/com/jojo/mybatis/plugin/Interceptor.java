@@ -5,4 +5,6 @@ package com.jojo.mybatis.plugin;
  */
 public interface Interceptor {
     Object intercept(Invocation invocation);
+
+    <T> T plugin(Object target);
 }

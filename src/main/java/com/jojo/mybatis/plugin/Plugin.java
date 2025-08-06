@@ -23,7 +23,7 @@ public class Plugin implements InvocationHandler {
         return interceptor.intercept(new Invocation(target, method, args));
     }
 
-    public static  <T> T warp(T target, Interceptor interceptor) {
+    public static  <T> T warp(Object target, Interceptor interceptor) {
         return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), new Plugin(target, interceptor));
     }
 }
