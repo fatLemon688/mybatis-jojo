@@ -3,6 +3,9 @@ package com.jojo.mybatis.session;
 import com.jojo.mybatis.executor.Executor;
 import com.jojo.mybatis.executor.SimpleExecutor;
 import com.jojo.mybatis.mapping.MappedStatement;
+import com.jojo.mybatis.plugin.InterceptorChain;
+import com.jojo.mybatis.plugin.LimitInterceptor;
+import com.jojo.mybatis.plugin.SqlInterceptor;
 import com.jojo.mybatis.type.IntegerTypeHandler;
 import com.jojo.mybatis.type.StringTypeHandler;
 import com.jojo.mybatis.type.TypeHandler;
@@ -21,9 +24,13 @@ public class Configuration {
 
     private Map<Class, TypeHandler> typeHandlerMap = new HashMap<>();
 
+    private InterceptorChain interceptorChain = new InterceptorChain();
+
     public Configuration() {
         this.typeHandlerMap.put(Integer.class, new IntegerTypeHandler());
         this.typeHandlerMap.put(String.class, new StringTypeHandler());
+        interceptorChain.addInterceptor(new LimitInterceptor());
+        //interceptorChain.addInterceptor(new SqlInterceptor());
     }
 
     public void addMappedStatement(MappedStatement ms) {
@@ -35,6 +42,6 @@ public class Configuration {
     }
 
     public Executor newExecutor() {
-        return new SimpleExecutor(this);
+        return (Executor) interceptorChain.pluginAll(new SimpleExecutor(this));
     }
 }
