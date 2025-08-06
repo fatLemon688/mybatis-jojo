@@ -18,19 +18,37 @@ public class Plugin implements InvocationHandler {
 
     private Interceptor interceptor;
 
-    public Plugin(Object target, Interceptor interceptor) {
+    private Set<Method> methods;
+
+    public Plugin(Object target, Interceptor interceptor, Set<Method> methods) {
         this.target = target;
         this.interceptor = interceptor;
+        this.methods = methods;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return interceptor.intercept(new Invocation(target, method, args));
+        if (methods != null && methods.contains(method)) {
+            return interceptor.intercept(new Invocation(target, method, args));
+        } else {
+            return method.invoke(this.target, args);
+        }
     }
 
     public static  <T> T warp(Object target, Interceptor interceptor) {
-        if (target.getClass().isAssignableFrom(null)) {
-            return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), new Plugin(target, interceptor));
+        Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
+        Set<Class<?>> classes = signatureMap.keySet();
+        boolean isProxy = false;
+        Set<Method> methods = null;
+        for (Class<?> aClass : classes) {
+            if (aClass.isAssignableFrom(target.getClass())) {
+                isProxy = true;
+                methods = signatureMap.get(aClass);
+                break;
+            }
+        }
+        if (isProxy) {
+            return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), new Plugin(target, interceptor, methods));
         } else {
             return (T) target;
         }
