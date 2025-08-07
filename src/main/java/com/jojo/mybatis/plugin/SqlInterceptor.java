@@ -28,7 +28,7 @@ public class SqlInterceptor implements Interceptor{
         if (ps instanceof ClientPreparedStatement) {
             sql = ((ClientPreparedStatement) ps).asSql();
         }
-        System.err.println("执行SQL: " + sql);
+        log.info("执行SQL: " + sql);
         Object result = invocation.proceed();
         System.out.println("SQL插件end");
         return result;
