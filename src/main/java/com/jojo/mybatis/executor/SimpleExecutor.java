@@ -5,8 +5,8 @@ import com.jojo.mybatis.mapping.MappedStatement;
 import com.jojo.mybatis.session.Configuration;
 import lombok.SneakyThrows;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.List;
 
@@ -16,8 +16,11 @@ import java.util.List;
 public class SimpleExecutor implements Executor{
     private Configuration configuration;
 
+    private DataSource dataSource;
+
     public SimpleExecutor(Configuration configuration) {
         this.configuration = new Configuration();
+        dataSource = configuration.getDataSource();
     }
 
     @SneakyThrows
@@ -44,12 +47,7 @@ public class SimpleExecutor implements Executor{
     }
 
     @SneakyThrows
-    private static Connection getConnection() {
-        // 加载jdbc驱动
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        // 建立db连接
-        return DriverManager
-                .getConnection("jdbc:mysql://127.0.0.1:3306/mybatis-jojo?useSSL=false",
-                        "root", "Hu468502553");
+    private Connection getConnection() {
+        return dataSource.getConnection();
     }
 }

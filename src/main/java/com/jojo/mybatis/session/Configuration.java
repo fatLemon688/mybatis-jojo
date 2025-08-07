@@ -2,6 +2,7 @@ package com.jojo.mybatis.session;
 
 import com.jojo.mybatis.executor.Executor;
 import com.jojo.mybatis.executor.SimpleExecutor;
+import com.jojo.mybatis.executor.dataSource.PooledDataSource;
 import com.jojo.mybatis.executor.parameter.DefaultParameterHandler;
 import com.jojo.mybatis.executor.parameter.ParameterHandler;
 import com.jojo.mybatis.executor.resultSet.DefaultResultSetHandler;
@@ -17,6 +18,7 @@ import com.jojo.mybatis.type.StringTypeHandler;
 import com.jojo.mybatis.type.TypeHandler;
 import lombok.Data;
 
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +33,8 @@ public class Configuration {
     private Map<Class, TypeHandler> typeHandlerMap = new HashMap<>();
 
     private InterceptorChain interceptorChain = new InterceptorChain();
+
+    private DataSource dataSource = new PooledDataSource();
 
     public Configuration() {
         this.typeHandlerMap.put(Integer.class, new IntegerTypeHandler());

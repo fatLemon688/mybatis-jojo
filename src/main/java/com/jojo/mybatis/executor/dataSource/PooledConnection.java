@@ -13,25 +13,27 @@ public class PooledConnection implements InvocationHandler {
 
     private Connection proxyConnection;
 
-    private PooledSource dataSource;
+    private PooledDataSource dataSource;
 
-    public PooledConnection(PooledSource dataSource, Connection connection) {
+    public PooledConnection(PooledDataSource dataSource, Connection connection) {
         this.connection = connection;
         this.dataSource = dataSource;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Object result = null;
         if ("close".equals(method.getName())) {
             dataSource.returnConnection(proxyConnection);
         } else {
-            method.invoke(connection, args);
+            result = method.invoke(connection, args);
         }
-        return null;
+        return result;
     }
 
     public Connection getProxy() {
-        proxyConnection = (Connection) Proxy.newProxyInstance(connection.getClass().getClassLoader(), connection.getClass().getInterfaces(), this);
-        return proxyConnection;
+        Connection proxy = (Connection) Proxy.newProxyInstance(connection.getClass().getClassLoader(), connection.getClass().getInterfaces(), this);
+        proxyConnection = proxy;
+        return proxy;
     }
 }

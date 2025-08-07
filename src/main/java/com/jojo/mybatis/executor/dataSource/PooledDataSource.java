@@ -14,15 +14,16 @@ import java.util.logging.Logger;
 /**
  * 数据库连接池
  */
-public class PooledSource implements DataSource {
+public class PooledDataSource implements DataSource {
     private final int POOL_SIZE = 10;
     private LinkedBlockingQueue<Connection> pool = new LinkedBlockingQueue<>(POOL_SIZE);
 
     @SneakyThrows
-    public PooledSource() {
+    public PooledDataSource() {
         for (int i = 0; i < POOL_SIZE; i++) {
             Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mybatis-jojo?useSSL=false", "root", "Hu468502553");
-            pool.add(new PooledConnection(this, connection).getProxy());
+            Connection proxy = new PooledConnection(this, connection).getProxy();
+            pool.add(proxy);
         }
     }
 
