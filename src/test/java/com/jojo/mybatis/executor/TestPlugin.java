@@ -3,7 +3,7 @@ package com.jojo.mybatis.executor;
 import com.google.common.collect.Lists;
 import com.jojo.mybatis.plugin.InterceptorChain;
 import com.jojo.mybatis.plugin.LimitInterceptor;
-import com.jojo.mybatis.plugin.SqlInterceptor;
+import com.jojo.mybatis.plugin.SqlLogInterceptor;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -16,7 +16,7 @@ public class TestPlugin {
         UserService target = new UserServiceImpl();
         LimitInterceptor limitInterceptor = new LimitInterceptor();
         target = limitInterceptor.plugin(target);
-        target = new SqlInterceptor().plugin(target);
+        target = new SqlLogInterceptor().plugin(target);
         System.out.println(target.selectOne("xxx"));
     }
 
@@ -30,7 +30,7 @@ public class TestPlugin {
     public void test3() throws Exception {
         InterceptorChain interceptorChain = new InterceptorChain();
         interceptorChain.addInterceptor(new LimitInterceptor());
-        interceptorChain.addInterceptor(new SqlInterceptor());
+        interceptorChain.addInterceptor(new SqlLogInterceptor());
         UserService target = new UserServiceImpl();
         target = (UserService) interceptorChain.pluginAll(target);
         System.out.println(target.selectOne("xxx"));
