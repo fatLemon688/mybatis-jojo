@@ -32,6 +32,7 @@ public class MappedStatement {
     private Boolean isSelectMany;
 
     public BoundSql getBoundSql() {
+        // sql解析：#{} --> ?
         ParameterMappingTokenHandler tokenHandler = new ParameterMappingTokenHandler();
         GenericTokenParser parser = new GenericTokenParser("#{", "}", tokenHandler);
         String sql = parser.parse(this.sql);
