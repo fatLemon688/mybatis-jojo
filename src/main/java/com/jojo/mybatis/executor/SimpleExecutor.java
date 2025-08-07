@@ -32,7 +32,7 @@ public class SimpleExecutor implements Executor{
     public <T> List<T> query(MappedStatement ms, Object parameter) {
         Connection connection = getConnection();
         PreparedStatement ps = execute(connection, ms, parameter);
-        List<T> resultSet = handleResultSet(ms, ps);
+        List<T> resultSet = configuration.newResultSetHandler().handleResultSet(ms, ps);
         // 释放资源
         connection.close();
         return resultSet;
@@ -59,39 +59,6 @@ public class SimpleExecutor implements Executor{
         return DriverManager
                 .getConnection("jdbc:mysql://127.0.0.1:3306/mybatis-jojo?useSSL=false",
                         "root", "Hu468502553");
-    }
-
-    @SneakyThrows
-    private <T> List<T> handleResultSet(MappedStatement ms, PreparedStatement ps) {
-        // 拿到mapper的返回类型
-        Class returnType = ms.getReturnType();
-
-        // 拿到结果集
-        ResultSet rs = ps.getResultSet();
-        // 把ResultSet里的每一条数据转成User对象存到list
-
-        // 拿到sql返回字段名称
-        List<String> columnList = Lists.newArrayList();
-        ResultSetMetaData metaData = rs.getMetaData();
-        for (int i = 0; i < metaData.getColumnCount(); i++) {
-            columnList.add(metaData.getColumnName(i + 1));
-        }
-
-        Map<Class, TypeHandler> typeHandlerMap = configuration.getTypeHandlerMap();
-        List instanceList = Lists.newArrayList();
-        while (rs.next()) {
-            // 结果映射
-            Object instance = returnType.newInstance();
-            for (String columnName : columnList) {
-                Field field = ReflectUtil.getField(returnType, columnName);
-                Object value = typeHandlerMap.get(field.getType()).getResult(rs, columnName);
-                ReflectUtil.setFieldValue(instance, columnName, value);
-            }
-            instanceList.add(instance);
-        }
-        rs.close();
-        ps.close();
-        return instanceList;
     }
 
     @SneakyThrows
