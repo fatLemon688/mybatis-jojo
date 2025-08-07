@@ -2,6 +2,8 @@ package com.jojo.mybatis.session;
 
 import com.jojo.mybatis.executor.Executor;
 import com.jojo.mybatis.executor.SimpleExecutor;
+import com.jojo.mybatis.executor.parameter.DefaultParameterHandler;
+import com.jojo.mybatis.executor.parameter.ParameterHandler;
 import com.jojo.mybatis.executor.resultSet.DefaultResultSetHandler;
 import com.jojo.mybatis.executor.resultSet.ResultSetHandler;
 import com.jojo.mybatis.mapping.MappedStatement;
@@ -50,4 +52,8 @@ public class Configuration {
     public ResultSetHandler newResultSetHandler() {
         return (ResultSetHandler) interceptorChain.pluginAll(new DefaultResultSetHandler(this));
     }
+    public ParameterHandler newParameterHandler() {
+        return (ParameterHandler) interceptorChain.pluginAll(new DefaultParameterHandler(this));
+    }
+
 }

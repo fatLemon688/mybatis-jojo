@@ -62,37 +62,12 @@ public class SimpleExecutor implements Executor{
     }
 
     @SneakyThrows
-    private void setParam(PreparedStatement ps, Object parameter, List<String> parameterMappings) {
-        //设置值
-        Map<Class, TypeHandler> typeHandlerMap = configuration.getTypeHandlerMap();
-        Map<String, Object> paramValueMap = (Map<String, Object>) parameter;
-        for (int i = 0; i < parameterMappings.size(); i++) {
-            // parameterMappings这个List:使字段顺序跟字段名绑定
-            // paramValueMap:使字段名跟字段值绑定
-            // 这样能使字段顺序跟字段值对应上，再使用PreparedStatement来设置值
-            String columName = parameterMappings.get(i);
-            if (columName.contains(".")) {
-                String[] split = columName.split("\\.");
-                String key = split[0];
-                Object instanceVal = paramValueMap.get(key);
-                String fieldName = split[1];
-                Object fieldValue = ReflectUtil.getFieldValue(instanceVal, fieldName);
-                typeHandlerMap.get(fieldValue.getClass()).setParameter(ps, i + 1, fieldValue);
-            } else {
-                Object val = paramValueMap.get(columName);
-                typeHandlerMap.get(val.getClass()).setParameter(ps, i + 1, val);
-            }
-
-        }
-    }
-
-    @SneakyThrows
     private PreparedStatement execute(Connection connection, MappedStatement ms, Object parameter) {
         // 构建sql和执行sql
         BoundSql boundSql = ms.getBoundSql();
         PreparedStatement ps = connection.prepareStatement(boundSql.getSql());
         // 设置值
-        setParam(ps, parameter, boundSql.getParameterMappings());
+        configuration.newParameterHandler().setParam(ps, parameter, boundSql.getParameterMappings());
         ps.execute();
         return ps;
     }
