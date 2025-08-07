@@ -6,6 +6,8 @@ import com.jojo.mybatis.executor.parameter.DefaultParameterHandler;
 import com.jojo.mybatis.executor.parameter.ParameterHandler;
 import com.jojo.mybatis.executor.resultSet.DefaultResultSetHandler;
 import com.jojo.mybatis.executor.resultSet.ResultSetHandler;
+import com.jojo.mybatis.executor.statement.PreparedStatementHandler;
+import com.jojo.mybatis.executor.statement.StatementHandler;
 import com.jojo.mybatis.mapping.MappedStatement;
 import com.jojo.mybatis.plugin.InterceptorChain;
 import com.jojo.mybatis.plugin.LimitInterceptor;
@@ -56,4 +58,7 @@ public class Configuration {
         return (ParameterHandler) interceptorChain.pluginAll(new DefaultParameterHandler(this));
     }
 
+    public StatementHandler newStatementHandler(MappedStatement ms, Object parameter) {
+        return (StatementHandler) interceptorChain.pluginAll(new PreparedStatementHandler(this, ms, parameter));
+    }
 }
