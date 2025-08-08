@@ -26,7 +26,7 @@ public class SqlLogInterceptor implements Interceptor{
     @SneakyThrows
     @Override
     public Object intercept(Invocation invocation) {
-        System.out.println("SQL插件start");
+//        System.out.println("SQL插件start");
         PreparedStatement ps = (PreparedStatement) invocation.getArgs()[0];
         String sql = "";
         if (ps instanceof ClientPreparedStatement) {
@@ -34,7 +34,7 @@ public class SqlLogInterceptor implements Interceptor{
         }
         log.info("执行SQL: " + sql);
         Object result = invocation.proceed();
-        System.out.println("SQL插件end");
+//        System.out.println("SQL插件end");
         return result;
     }
 

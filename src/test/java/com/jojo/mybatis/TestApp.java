@@ -19,8 +19,8 @@ public class TestApp {
         SqlSession sqlSession = sessionFactoryBuilder.build().openSession(false);
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 
-//        List<User> users = userMapper.selectList(1, "jojo");
-//        System.out.println(JSONUtil.toJsonStr(users));
+        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
+        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
 //        User user = userMapper.selectOne(1);
 //        System.out.println(user);
         System.out.println(userMapper.insert(User.builder().age(RandomUtil.randomInt()).name(RandomUtil.randomString(5)).build()));
