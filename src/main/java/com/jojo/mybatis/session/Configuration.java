@@ -1,5 +1,6 @@
 package com.jojo.mybatis.session;
 
+import com.jojo.mybatis.executor.CacheExecutor;
 import com.jojo.mybatis.executor.Executor;
 import com.jojo.mybatis.executor.SimpleExecutor;
 import com.jojo.mybatis.dataSource.PooledDataSource;
@@ -37,6 +38,8 @@ public class Configuration {
 
     private DataSource dataSource = new PooledDataSource();
 
+    private boolean cacheEnable = true;
+
     public Configuration() {
         this.typeHandlerMap.put(Integer.class, new IntegerTypeHandler());
         this.typeHandlerMap.put(String.class, new StringTypeHandler());
@@ -53,7 +56,11 @@ public class Configuration {
     }
 
     public Executor newExecutor(Transaction transaction) {
-        return (Executor) interceptorChain.pluginAll(new SimpleExecutor(this, transaction));
+        Executor executor = new SimpleExecutor(this, transaction);
+        if (cacheEnable) {
+            executor =  new CacheExecutor(executor);
+        }
+        return (Executor) interceptorChain.pluginAll(executor);
     }
 
     public ResultSetHandler newResultSetHandler() {

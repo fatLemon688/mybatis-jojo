@@ -21,11 +21,13 @@ public class TestApp {
 
         System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
         System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
+        System.out.println(sessionFactoryBuilder.build().openSession(false).getMapper(UserMapper.class).selectList(1, "jojo"));
+//        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(2, "jojo")));
 //        User user = userMapper.selectOne(1);
 //        System.out.println(user);
-        System.out.println(userMapper.insert(User.builder().age(RandomUtil.randomInt()).name(RandomUtil.randomString(5)).build()));
-        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
-        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
+//        System.out.println(userMapper.insert(User.builder().age(RandomUtil.randomInt()).name(RandomUtil.randomString(5)).build()));
+//        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
+//        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
 //        System.out.println(userMapper.delete(3));
 //        System.out.println(userMapper.update(5, "testUpdate"));
         sqlSession.commit();

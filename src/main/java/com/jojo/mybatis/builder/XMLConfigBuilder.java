@@ -2,10 +2,12 @@ package com.jojo.mybatis.builder;
 
 import cn.hutool.core.util.ClassUtil;
 import com.google.common.collect.Lists;
+import com.jojo.mybatis.annotations.CacheNamespace;
 import com.jojo.mybatis.annotations.Delete;
 import com.jojo.mybatis.annotations.Insert;
 import com.jojo.mybatis.annotations.Select;
 import com.jojo.mybatis.annotations.Update;
+import com.jojo.mybatis.cache.PerpetualCache;
 import com.jojo.mybatis.mapping.MappedStatement;
 import com.jojo.mybatis.mapping.SqlCommandType;
 import com.jojo.mybatis.session.Configuration;
@@ -36,6 +38,8 @@ public class XMLConfigBuilder {
         // com.jojo.mybatis.demo.mapper
         Set<Class<?>> classes = ClassUtil.scanPackage("com.jojo.demo.mapper");
         for (Class<?> aClass : classes) {
+            CacheNamespace cacheNamespace = aClass.getAnnotation(CacheNamespace.class);
+            boolean isCache = cacheNamespace != null;
             Method[] methods = aClass.getMethods();
             for (Method method : methods) {
                 SqlCommandType sqlCommandType = null;
@@ -74,11 +78,12 @@ public class XMLConfigBuilder {
 
                 // 封装
                 MappedStatement mappedStatement = MappedStatement.builder()
-                        .id(aClass.getName()+ "." + method.getName())
+                        .id(aClass.getName() + "." + method.getName())
                         .sql(originalSql)
                         .returnType(returnType)
                         .sqlCommandType(sqlCommandType)
                         .isSelectMany(isSelectMany)
+                        .cache(isCache ? new PerpetualCache(aClass.getName()) : null)
                         .build();
                 configuration.addMappedStatement(mappedStatement);
             }

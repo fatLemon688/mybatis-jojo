@@ -1,5 +1,6 @@
 package com.jojo.mybatis.mapping;
 
+import com.jojo.mybatis.cache.Cache;
 import com.jojo.mybatis.parsing.GenericTokenParser;
 import com.jojo.mybatis.parsing.ParameterMappingTokenHandler;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,8 @@ public class MappedStatement {
 
     // 是否查询多条数据
     private Boolean isSelectMany;
+
+    private Cache cache; // 缓存
 
     public BoundSql getBoundSql() {
         // sql解析：#{} --> ?
