@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.jojo.demo.entity.User;
 import com.jojo.demo.mapper.UserMapper;
+import com.jojo.mybatis.session.SqlSessionFactory;
 import com.jojo.mybatis.session.SqlSessionFactoryBuilder;
 import com.jojo.mybatis.session.SqlSession;
 import org.junit.Test;
@@ -16,12 +17,19 @@ public class TestApp {
     @Test
     public void test() throws Exception {
         SqlSessionFactoryBuilder sessionFactoryBuilder = new SqlSessionFactoryBuilder();
-        SqlSession sqlSession = sessionFactoryBuilder.build().openSession(false);
+        SqlSessionFactory sqlSessionFactory = sessionFactoryBuilder.build();
+        SqlSession sqlSession = sqlSessionFactory.openSession(false);
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 
         System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
         System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
-        System.out.println(sessionFactoryBuilder.build().openSession(false).getMapper(UserMapper.class).selectList(1, "jojo"));
+        sqlSession.commit();
+        sqlSession.close();
+
+        SqlSession sqlSession2 = sqlSessionFactory.openSession(false);
+        UserMapper userMapper2 = sqlSession2.getMapper(UserMapper.class);
+        System.out.println(JSONUtil.toJsonStr(userMapper2.selectList(1, "jojo")));
+        System.out.println(JSONUtil.toJsonStr(userMapper2.selectList(1, "jojo")));
 //        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(2, "jojo")));
 //        User user = userMapper.selectOne(1);
 //        System.out.println(user);
@@ -30,7 +38,7 @@ public class TestApp {
 //        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
 //        System.out.println(userMapper.delete(3));
 //        System.out.println(userMapper.update(5, "testUpdate"));
-        sqlSession.commit();
-        sqlSession.close();
+        sqlSession2.commit();
+        sqlSession2.close();
     }
 }

@@ -36,7 +36,9 @@ public class JDBCTransaction implements Transaction {
         if (autoCommit) {
             return;
         }
-        connection.commit();
+        if (connection != null) {
+            connection.commit();
+        }
     }
 
     @SneakyThrows
@@ -45,12 +47,16 @@ public class JDBCTransaction implements Transaction {
         if (autoCommit) {
             return;
         }
-        connection.rollback();
+        if (connection != null) {
+            connection.rollback();
+        }
     }
 
     @SneakyThrows
     @Override
     public void close() {
-        connection.close();
+        if (connection != null) {
+            connection.close();
+        }
     }
 }

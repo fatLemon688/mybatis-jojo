@@ -1,5 +1,6 @@
 package com.jojo.mybatis.executor;
 
+import com.jojo.mybatis.cache.Cache;
 import com.jojo.mybatis.mapping.MappedStatement;
 
 import java.util.List;
@@ -16,11 +17,24 @@ public class CacheExecutor implements Executor {
 
     @Override
     public <T> List<T> query(MappedStatement ms, Object parameter) {
-        return delegate.query(ms, parameter);
+        Cache cache = ms.getCache();
+        if (cache == null) {
+            // 没有开启二级缓存
+            return delegate.query(ms, parameter);
+        }
+        String cacheKey = ms.getCacheKey(parameter);
+        Object list = cache.getObject(cacheKey);
+        if (list == null) {
+            list = delegate.query(ms, parameter);
+            cache.putObject(cacheKey, list);
+            return (List<T>) list;
+        }
+        return (List<T>) list;
     }
 
     @Override
     public int update(MappedStatement ms, Object parameter) {
+        ms.getCache().clear();
         return delegate.update(ms, parameter);
     }
 
