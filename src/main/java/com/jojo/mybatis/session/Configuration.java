@@ -13,6 +13,7 @@ import com.jojo.mybatis.mapping.MappedStatement;
 import com.jojo.mybatis.plugin.InterceptorChain;
 import com.jojo.mybatis.plugin.LimitInterceptor;
 import com.jojo.mybatis.plugin.SqlLogInterceptor;
+import com.jojo.mybatis.transaction.Transaction;
 import com.jojo.mybatis.type.IntegerTypeHandler;
 import com.jojo.mybatis.type.StringTypeHandler;
 import com.jojo.mybatis.type.TypeHandler;
@@ -51,8 +52,8 @@ public class Configuration {
         return this.mappedStatementMap.get(id);
     }
 
-    public Executor newExecutor() {
-        return (Executor) interceptorChain.pluginAll(new SimpleExecutor(this));
+    public Executor newExecutor(Transaction transaction) {
+        return (Executor) interceptorChain.pluginAll(new SimpleExecutor(this, transaction));
     }
 
     public ResultSetHandler newResultSetHandler() {

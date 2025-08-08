@@ -11,4 +11,10 @@ public interface Executor {
     <T> List<T> query(MappedStatement ms, Object parameter);
 
     int update(MappedStatement ms, Object parameter);
+
+    void commit();
+
+    void rollback();
+
+    void close();
 }

@@ -3,9 +3,9 @@ package com.jojo.mybatis.executor;
 import com.jojo.mybatis.executor.statement.StatementHandler;
 import com.jojo.mybatis.mapping.MappedStatement;
 import com.jojo.mybatis.session.Configuration;
+import com.jojo.mybatis.transaction.Transaction;
 import lombok.SneakyThrows;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
@@ -16,11 +16,11 @@ import java.util.List;
 public class SimpleExecutor implements Executor{
     private Configuration configuration;
 
-    private DataSource dataSource;
+    private Transaction transaction;
 
-    public SimpleExecutor(Configuration configuration) {
-        this.configuration = new Configuration();
-        dataSource = configuration.getDataSource();
+    public SimpleExecutor(Configuration configuration, Transaction transaction) {
+        this.configuration = configuration;
+        this.transaction = transaction;
     }
 
     @SneakyThrows
@@ -46,8 +46,23 @@ public class SimpleExecutor implements Executor{
         return statementHandler.update(statement);
     }
 
+    @Override
+    public void commit() {
+        transaction.commit();
+    }
+
+    @Override
+    public void rollback() {
+        transaction.rollback();
+    }
+
+    @Override
+    public void close() {
+        transaction.close();
+    }
+
     @SneakyThrows
     private Connection getConnection() {
-        return dataSource.getConnection();
+        return transaction.getConnection();
     }
 }

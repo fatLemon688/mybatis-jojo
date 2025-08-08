@@ -66,4 +66,19 @@ public class DefaultSqlSession implements SqlSession {
     public Configuration getConfiguration() {
         return configuration;
     }
+
+    @Override
+    public void commit() {
+        executor.commit();
+    }
+
+    @Override
+    public void rollback() {
+        executor.rollback();
+    }
+
+    @Override
+    public void close() {
+        executor.close();
+    }
 }
