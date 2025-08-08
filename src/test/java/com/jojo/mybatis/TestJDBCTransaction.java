@@ -19,6 +19,8 @@ public class TestJDBCTransaction {
         System.out.println("是否自动提交：" + connection.getAutoCommit());
         // 设置手动提交
         connection.setAutoCommit(false);
+        System.out.println("事务隔离级别: " + connection.getTransactionIsolation());
+//        connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ); // 事务隔离级别
         // 构建sql和执行sql
         PreparedStatement ps = connection.prepareStatement("INSERT INTO t_user (name, age) VALUES ('haku', 20)");
         ps.execute();
