@@ -1,5 +1,7 @@
 package com.jojo.mybatis.executor;
 
+import com.jojo.mybatis.cache.Cache;
+import com.jojo.mybatis.cache.PerpetualCache;
 import com.jojo.mybatis.executor.statement.StatementHandler;
 import com.jojo.mybatis.mapping.MappedStatement;
 import com.jojo.mybatis.session.Configuration;
@@ -18,17 +20,27 @@ public class SimpleExecutor implements Executor{
 
     private Transaction transaction;
 
+    private Cache localCache;
+
     public SimpleExecutor(Configuration configuration, Transaction transaction) {
         this.configuration = configuration;
         this.transaction = transaction;
+        localCache = new PerpetualCache("LocalCache");
     }
 
     @SneakyThrows
     @Override
     public <T> List<T> query(MappedStatement ms, Object parameter) {
+        String cacheKey = ms.getCacheKey(parameter);
+        Object list = localCache.getObject(cacheKey);
+        if (list != null) {
+            return (List<T>) list;
+        }
         StatementHandler statementHandler = configuration.newStatementHandler(ms, parameter);
         Statement statement = prepareStatement(statementHandler);
-        return statementHandler.query(statement);
+        list = statementHandler.query(statement);
+        localCache.putObject(cacheKey, list);
+        return (List<T>) list;
     }
 
     private Statement prepareStatement(StatementHandler statementHandler) {
@@ -41,6 +53,7 @@ public class SimpleExecutor implements Executor{
     @SneakyThrows
     @Override
     public int update(MappedStatement ms, Object parameter) {
+        localCache.clear();
         StatementHandler statementHandler = configuration.newStatementHandler(ms, parameter);
         Statement statement = prepareStatement(statementHandler);
         return statementHandler.update(statement);

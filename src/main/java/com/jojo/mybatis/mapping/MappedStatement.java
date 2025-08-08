@@ -39,4 +39,8 @@ public class MappedStatement {
         List<String> parameterMappings = tokenHandler.getParameterMappings();
         return BoundSql.builder().sql(sql).parameterMappings(parameterMappings).build();
     }
+
+    public String getCacheKey(Object parameter) {
+        return id + ":" + sql + ":" + parameter;
+    }
 }
