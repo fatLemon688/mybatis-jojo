@@ -2,7 +2,7 @@ package com.jojo.mybatis.session;
 
 import com.jojo.mybatis.executor.Executor;
 import com.jojo.mybatis.executor.SimpleExecutor;
-import com.jojo.mybatis.executor.dataSource.PooledDataSource;
+import com.jojo.mybatis.dataSource.PooledDataSource;
 import com.jojo.mybatis.executor.parameter.DefaultParameterHandler;
 import com.jojo.mybatis.executor.parameter.ParameterHandler;
 import com.jojo.mybatis.executor.resultSet.DefaultResultSetHandler;

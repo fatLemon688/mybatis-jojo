@@ -1,4 +1,4 @@
-package com.jojo.mybatis.executor.dataSource;
+package com.jojo.mybatis.dataSource;
 
 import lombok.SneakyThrows;
 
