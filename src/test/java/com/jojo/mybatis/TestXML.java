@@ -1,6 +1,7 @@
 package com.jojo.mybatis;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -30,20 +31,26 @@ public class TestXML {
             String resultType = selectElement.attributeValue("resultType");
             List<Node> contentList = selectElement.content();
             for (Node node : contentList) {
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element childNodeElement = (Element) node;
-                    String sqlNodeType = childNodeElement.getName();
-                    String test = childNodeElement.attributeValue("test");
-                    System.out.println("类型: " + sqlNodeType);
-                    System.out.println("表达式: " + test);
-                } else {
-                    String sql = node.getText();
-                    System.out.println("sql:" + sql);
-                }
-
-                System.out.println(node.getNodeType());
+                parseTags(node);
             }
             System.out.println(resultType);
+        }
+    }
+
+    private void parseTags(Node node) {
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Element childNodeElement = (Element) node;
+            String sqlNodeType = childNodeElement.getName();
+            String test = childNodeElement.attributeValue("test");
+            System.out.println("类型: " + sqlNodeType);
+            System.out.println("表达式: " + test);
+            List<Node> contentList = childNodeElement.content();
+            contentList.forEach(item -> parseTags(item));
+        } else {
+            String sql = node.getText();
+            if (StrUtil.isNotBlank(sql)) {
+                System.out.println("sql:" + sql.trim());
+            }
         }
     }
 }

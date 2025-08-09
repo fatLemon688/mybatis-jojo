@@ -6,7 +6,10 @@
     <select id="findOne" resultType="com.jojo.demo.entity.User">
         select * from t_user where id = #{id}
         <if test="id != null">
-            And id = #{id}
+            and id = #{id}
+            <if test="xx != null">
+                limit 1
+            </if>
         </if>
     </select>
 </mapper>
