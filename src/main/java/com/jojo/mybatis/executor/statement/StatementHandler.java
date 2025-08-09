@@ -1,5 +1,7 @@
 package com.jojo.mybatis.executor.statement;
 
+import com.jojo.mybatis.mapping.BoundSql;
+
 import java.sql.Connection;
 import java.sql.Statement;
 
@@ -14,4 +16,6 @@ public interface StatementHandler {
     <T> T query(Statement statement);
 
     int update(Statement statement);
+
+    BoundSql getBoundSql();
 }

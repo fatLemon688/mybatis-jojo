@@ -1,24 +1,29 @@
 package com.jojo.mybatis.plugin;
 
-import com.jojo.mybatis.executor.Executor;
-import com.jojo.mybatis.mapping.MappedStatement;
+import com.jojo.mybatis.executor.statement.PreparedStatementHandler;
+import com.jojo.mybatis.executor.statement.StatementHandler;
+import com.jojo.mybatis.mapping.BoundSql;
+
+import java.sql.Connection;
 
 /**
  *  分页插件
  */
 @Intercepts({
         @Signature(
-                type = Executor.class,
-                method = "query",
-                args = {MappedStatement.class, Object.class})
+                type = StatementHandler.class,
+                method = "prepare",
+                args = {Connection.class})
 })
 public class LimitInterceptor implements Interceptor{
     @Override
     public Object intercept(Invocation invocation) {
+        PreparedStatementHandler psh = (PreparedStatementHandler) invocation.getTarget();
+        BoundSql boundSql = psh.getBoundSql();
 //        System.out.println("分页插件start");
-        MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
-        if (!ms.getSql().contains("LIMIT")) {
-            ms.setSql(ms.getSql() + " LIMIT 2");
+        String sql = boundSql.getSql();
+        if (!sql.contains("LIMIT")) {
+            boundSql.setSql(sql +  " LIMIT 2");
         }
         Object result = invocation.proceed();
 //        System.out.println("分页插件end");
