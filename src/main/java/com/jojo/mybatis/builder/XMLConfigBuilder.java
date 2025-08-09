@@ -1,5 +1,6 @@
 package com.jojo.mybatis.builder;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ClassUtil;
 import com.google.common.collect.Lists;
 import com.jojo.mybatis.annotations.CacheNamespace;
@@ -10,9 +11,20 @@ import com.jojo.mybatis.annotations.Update;
 import com.jojo.mybatis.cache.PerpetualCache;
 import com.jojo.mybatis.mapping.MappedStatement;
 import com.jojo.mybatis.mapping.SqlCommandType;
+import com.jojo.mybatis.scripting.IfSqlNode;
+import com.jojo.mybatis.scripting.MixedSqlNode;
+import com.jojo.mybatis.scripting.SqlNode;
+import com.jojo.mybatis.scripting.StaticTextSqlNode;
 import com.jojo.mybatis.session.Configuration;
 import lombok.SneakyThrows;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.dom4j.io.SAXReader;
+import org.xml.sax.InputSource;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -30,6 +42,7 @@ public class XMLConfigBuilder {
         Configuration configuration = new Configuration();
         // 解析mapper
         parseMapper(configuration);
+        parseMapperXml(configuration);
         return configuration;
     }
 
@@ -42,6 +55,7 @@ public class XMLConfigBuilder {
             boolean isCache = cacheNamespace != null;
             Method[] methods = aClass.getMethods();
             for (Method method : methods) {
+                boolean isExistAnnotation = false;
                 SqlCommandType sqlCommandType = null;
                 // 原始SQL
                 String originalSql = "";
@@ -62,7 +76,10 @@ public class XMLConfigBuilder {
                     } else {
                         throw new RuntimeException("AnnotationType is invalid. annotationType = " + annotation);
                     }
-
+                    isExistAnnotation = true;
+                }
+                if (!isExistAnnotation) {
+                    continue;
                 }
 
                 // 拿到mapper的返回类型
@@ -90,5 +107,58 @@ public class XMLConfigBuilder {
         }
 
 
+    }
+
+    @SneakyThrows
+    private void parseMapperXml(Configuration configuration) {
+        // 解析xml
+        SAXReader saxReader = new SAXReader();
+        saxReader.setEntityResolver((publicId, systemId) -> new InputSource(new ByteArrayInputStream("<?xml version='1.0' encoding='UTF8'?>".getBytes())));
+        BufferedInputStream inputStream = FileUtil.getInputStream(
+                System.getProperty("user.dir") + "/src/main/java/com/jojo/demo/mapper/UserMapper.xml");
+        Document document = saxReader.read(inputStream);
+        Element rootElement = document.getRootElement();
+        List<Element> list = rootElement.selectNodes("//select");
+        for (Element selectElement : list) {
+            String methodName = selectElement.attributeValue("id");
+            String resultType = selectElement.attributeValue("resultType");
+            MixedSqlNode mixedSqlNode = parseTags(selectElement);
+
+
+            // 封装
+            String namespace = rootElement.attributeValue("namespace");
+            MappedStatement mappedStatement = MappedStatement.builder()
+                    .id(namespace + "." + methodName)
+                    .sql("")
+                    .sqlSource(mixedSqlNode)
+                    .returnType(Class.forName(resultType))
+                    .sqlCommandType(SqlCommandType.SELECT)
+                    .isSelectMany(false)
+                    .cache(new PerpetualCache(namespace))
+                    .build();
+            configuration.addMappedStatement(mappedStatement);
+        }
+    }
+
+    private MixedSqlNode parseTags(Element element) {
+        List<SqlNode> contents = Lists.newArrayList();
+
+        List<Node> contentList = element.content();
+        for (Node node : contentList) {
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element childNodeElement = (Element) node;
+                String sqlNodeType = childNodeElement.getName();
+                String test = childNodeElement.attributeValue("test");
+                if ("if".equals(sqlNodeType)) {
+                    contents.add(new IfSqlNode(test, parseTags(childNodeElement)));
+                } else if ("choose".equals(sqlNodeType)) {
+                    // contents.add(new ChooseSqlNode(test, parseTags(childNodeElement)));
+                }
+            } else {
+                String sql = node.getText();
+                contents.add(new StaticTextSqlNode(sql));
+            }
+        }
+        return new MixedSqlNode(contents);
     }
 }

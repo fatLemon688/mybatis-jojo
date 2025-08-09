@@ -21,7 +21,7 @@ public class TestApp {
         SqlSession sqlSession = sqlSessionFactory.openSession(false);
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 
-        System.out.println(JSONUtil.toJsonStr(userMapper.selectList(1, "jojo")));
+        System.out.println(JSONUtil.toJsonStr(userMapper.findOne(2)));
         sqlSession.commit();
         sqlSession.close();
 
