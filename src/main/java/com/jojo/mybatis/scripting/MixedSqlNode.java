@@ -17,7 +17,7 @@ public class MixedSqlNode implements SqlNode {
 
     @SneakyThrows
     @Override
-    public void apply(Map context) {
+    public void apply(DynamicContext context) {
         for (SqlNode content : contents) {
             content.apply(context);
         }

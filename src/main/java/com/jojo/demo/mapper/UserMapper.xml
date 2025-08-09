@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace = "com.jojo.demo.mapper.UserMapper">
     <select id="findOne" resultType="com.jojo.demo.entity.User">
-        select * from t_user where id = #{id}
+        select * from t_user
         <if test="id != null">
-            and id = #{id}
+            where id = #{id}
             <if test="xx != null">
                 limit 1
             </if>
