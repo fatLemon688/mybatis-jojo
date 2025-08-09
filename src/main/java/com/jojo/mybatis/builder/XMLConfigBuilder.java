@@ -15,6 +15,7 @@ import com.jojo.mybatis.scripting.IfSqlNode;
 import com.jojo.mybatis.scripting.MixedSqlNode;
 import com.jojo.mybatis.scripting.SqlNode;
 import com.jojo.mybatis.scripting.StaticTextSqlNode;
+import com.jojo.mybatis.scripting.TextSqlNode;
 import com.jojo.mybatis.session.Configuration;
 import lombok.SneakyThrows;
 import org.dom4j.Document;
@@ -156,7 +157,11 @@ public class XMLConfigBuilder {
                 }
             } else {
                 String sql = node.getText();
-                contents.add(new StaticTextSqlNode(sql));
+                if (sql.contains("${")) {
+                    contents.add(new TextSqlNode(sql));
+                } else {
+                    contents.add(new StaticTextSqlNode(sql));
+                }
             }
         }
         return new MixedSqlNode(contents);
