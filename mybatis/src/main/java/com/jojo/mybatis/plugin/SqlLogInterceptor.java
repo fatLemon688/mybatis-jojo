@@ -29,9 +29,12 @@ public class SqlLogInterceptor implements Interceptor{
 //        System.out.println("SQL插件start");
         PreparedStatement ps = (PreparedStatement) invocation.getArgs()[0];
         String sql = "";
-        if (ps instanceof ClientPreparedStatement) {
-           sql = ((ClientPreparedStatement) ps).getPreparedSql();
+        if (PreparedStatement.class.isAssignableFrom(ps.getClass())) {
+//           sql = ((ClientPreparedStatement) ps).getPreparedSql();
+
         }
+        String[] split = ps.toString().split(": ");
+        sql = split[1];
         log.info("执行SQL: " + sql);
         Object result = invocation.proceed();
 //        System.out.println("SQL插件end");

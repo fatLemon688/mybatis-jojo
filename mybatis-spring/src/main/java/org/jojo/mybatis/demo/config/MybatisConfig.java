@@ -1,5 +1,7 @@
 package org.jojo.mybatis.demo.config;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.druid.pool.DruidDataSource;
@@ -10,6 +12,7 @@ import org.jojo.mybatis.demo.entity.User;
 import org.jojo.mybatis.demo.service.UserService;
 import org.jojo.mybatis.spring.annotation.MapperScan;
 import org.jojo.mybatis.spring.transaction.SpringManagedTransaction;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -57,6 +60,10 @@ public class MybatisConfig {
     }
 
     public static void main(String[] args) {
+        // Logback运行时动态更改日志级别
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        loggerContext.getLogger("ROOT").setLevel(Level.INFO);
+
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MybatisConfig.class);
         UserService userService = context.getBean(UserService.class);
         System.out.println(JSONUtil.toJsonStr(userService.findOne(2)));
