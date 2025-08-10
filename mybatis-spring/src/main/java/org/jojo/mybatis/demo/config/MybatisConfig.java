@@ -9,6 +9,7 @@ import com.jojo.mybatis.session.SqlSessionFactoryBuilder;
 import org.jojo.mybatis.demo.entity.User;
 import org.jojo.mybatis.demo.service.UserService;
 import org.jojo.mybatis.spring.annotation.MapperScan;
+import org.jojo.mybatis.spring.transaction.SpringManagedTransaction;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,8 +27,8 @@ import javax.sql.DataSource;
 @MapperScan("org.jojo.mybatis.demo.mapper")
 public class MybatisConfig {
     @Bean
-    public SqlSession sqlSession() {
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build();
+    public SqlSession sqlSession(DataSource dataSource) {
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(dataSource, new SpringManagedTransaction(dataSource));
         SqlSession sqlSession = sqlSessionFactory.openSession();
         return sqlSession;
     }

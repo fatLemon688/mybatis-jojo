@@ -17,6 +17,7 @@ import com.jojo.mybatis.scripting.SqlNode;
 import com.jojo.mybatis.scripting.StaticTextSqlNode;
 import com.jojo.mybatis.scripting.TextSqlNode;
 import com.jojo.mybatis.session.Configuration;
+import com.jojo.mybatis.transaction.Transaction;
 import lombok.SneakyThrows;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -24,6 +25,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.xml.sax.InputSource;
 
+import javax.sql.DataSource;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.lang.annotation.Annotation;
@@ -45,6 +47,13 @@ public class XMLConfigBuilder {
         parseMapper(configuration, "com.jojo.demo.mapper");
         parseMapper(configuration, "org.jojo.mybatis.demo.mapper");
         parseMapperXml(configuration);
+        return configuration;
+    }
+
+    public Configuration parse(DataSource dataSource, Transaction transaction) {
+        Configuration configuration = parse();
+        configuration.setDataSource(dataSource);
+        configuration.setTransaction(transaction);
         return configuration;
     }
 

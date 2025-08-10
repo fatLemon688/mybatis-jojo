@@ -38,6 +38,6 @@ public class UserServiceImpl implements UserService {
         System.out.println("userService save...");
         userMapper.insert(user);
 //        jdbcTemplate.execute("insert into t_user(name, age) values('testJdbc', 18)");
-        int i = 1 / 0;
+//        int i = 1 / 0;
     }
 }

@@ -18,7 +18,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
     @Override
     public SqlSession openSession(boolean autoCommit) {
-        Transaction transaction = new JDBCTransaction(configuration.getDataSource(), autoCommit);
+        Transaction transaction = configuration.getTransaction(autoCommit);
         return new DefaultSqlSession(configuration.newExecutor(transaction), configuration);
     }
 

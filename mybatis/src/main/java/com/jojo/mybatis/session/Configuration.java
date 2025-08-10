@@ -14,6 +14,7 @@ import com.jojo.mybatis.mapping.MappedStatement;
 import com.jojo.mybatis.plugin.InterceptorChain;
 import com.jojo.mybatis.plugin.LimitInterceptor;
 import com.jojo.mybatis.plugin.SqlLogInterceptor;
+import com.jojo.mybatis.transaction.JDBCTransaction;
 import com.jojo.mybatis.transaction.Transaction;
 import com.jojo.mybatis.type.IntegerTypeHandler;
 import com.jojo.mybatis.type.StringTypeHandler;
@@ -36,6 +37,10 @@ public class Configuration {
 
     private InterceptorChain interceptorChain = new InterceptorChain();
 
+    private Transaction transaction;
+
+    private boolean isSpringTransaction = false;
+
     private DataSource dataSource = new PooledDataSource();
 
     private boolean cacheEnable = true;
@@ -45,6 +50,18 @@ public class Configuration {
         this.typeHandlerMap.put(String.class, new StringTypeHandler());
         interceptorChain.addInterceptor(new LimitInterceptor());
         interceptorChain.addInterceptor(new SqlLogInterceptor());
+    }
+
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
+        isSpringTransaction = true;
+    }
+
+    public Transaction getTransaction(boolean autoCommit) {
+        if (isSpringTransaction) {
+            return transaction;
+        }
+        return new JDBCTransaction(dataSource, autoCommit);
     }
 
     public void addMappedStatement(MappedStatement ms) {
