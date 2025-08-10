@@ -30,7 +30,7 @@ public class SqlLogInterceptor implements Interceptor{
         PreparedStatement ps = (PreparedStatement) invocation.getArgs()[0];
         String sql = "";
         if (ps instanceof ClientPreparedStatement) {
-            sql = ((ClientPreparedStatement) ps).asSql();
+           sql = ((ClientPreparedStatement) ps).getPreparedSql();
         }
         log.info("执行SQL: " + sql);
         Object result = invocation.proceed();
