@@ -11,6 +11,7 @@
   <url>http://maven.apache.org</url>
   <modules>
     <module>mybatis</module>
+    <module>mybatis-spring</module>
   </modules>
 
   <properties>
