@@ -42,15 +42,16 @@ public class XMLConfigBuilder {
     public Configuration parse() {
         Configuration configuration = new Configuration();
         // 解析mapper
-        parseMapper(configuration);
+        parseMapper(configuration, "com.jojo.demo.mapper");
+        parseMapper(configuration, "org.jojo.mybatis.demo.mapper");
         parseMapperXml(configuration);
         return configuration;
     }
 
     @SneakyThrows
-    private void parseMapper(Configuration configuration) {
+    private void parseMapper(Configuration configuration, String packName) {
         // com.jojo.mybatis.demo.mapper
-        Set<Class<?>> classes = ClassUtil.scanPackage("com.jojo.demo.mapper");
+        Set<Class<?>> classes = ClassUtil.scanPackage(packName);
         for (Class<?> aClass : classes) {
             CacheNamespace cacheNamespace = aClass.getAnnotation(CacheNamespace.class);
             boolean isCache = cacheNamespace != null;
@@ -115,8 +116,12 @@ public class XMLConfigBuilder {
         // 解析xml
         SAXReader saxReader = new SAXReader();
         saxReader.setEntityResolver((publicId, systemId) -> new InputSource(new ByteArrayInputStream("<?xml version='1.0' encoding='UTF8'?>".getBytes())));
+        String xmlPath = System.getProperty("user.dir") + "/src/main/java/com/jojo/demo/mapper/UserMapper.xml";
+        if (!FileUtil.exist(xmlPath)) {
+            return;
+        }
         BufferedInputStream inputStream = FileUtil.getInputStream(
-                System.getProperty("user.dir") + "/src/main/java/com/jojo/demo/mapper/UserMapper.xml");
+                xmlPath);
         Document document = saxReader.read(inputStream);
         Element rootElement = document.getRootElement();
         List<Element> list = rootElement.selectNodes("//select");

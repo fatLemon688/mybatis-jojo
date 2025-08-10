@@ -1,9 +1,9 @@
 package org.jojo.mybatis.demo.service.impl;
 
-import jakarta.annotation.Resource;
 import org.jojo.mybatis.demo.entity.User;
 import org.jojo.mybatis.demo.mapper.UserMapper;
 import org.jojo.mybatis.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserServiceImpl implements UserService {
-    @Resource
+    @Autowired
     private UserMapper userMapper;
 
     @Override
