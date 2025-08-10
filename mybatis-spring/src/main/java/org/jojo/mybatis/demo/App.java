@@ -1,5 +1,6 @@
 package org.jojo.mybatis.demo;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.json.JSONUtil;
 import com.jojo.mybatis.session.SqlSession;
 import com.jojo.mybatis.session.SqlSessionFactory;
@@ -27,7 +28,7 @@ public class App {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(App.class);
         UserService userService = context.getBean(UserService.class);
-        User user = userService.findOne(2);
-        System.out.println(JSONUtil.toJsonStr(user));
+        System.out.println(JSONUtil.toJsonStr(userService.findOne(2)));
+        userService.save(new User(6,  DateTime.now() + "jojo", 20));
     }
 }

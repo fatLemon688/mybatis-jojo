@@ -7,4 +7,6 @@ import org.jojo.mybatis.demo.entity.User;
  */
 public interface UserService {
     User findOne(Integer id);
+
+    void save(User user);
 }

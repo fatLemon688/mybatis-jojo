@@ -6,6 +6,7 @@ import org.jojo.mybatis.demo.mapper.UserMapper;
 import org.jojo.mybatis.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *  用户实现类
@@ -25,5 +26,13 @@ public class UserServiceImpl implements UserService {
         System.out.println(user);
         System.out.println(user2);
         return user;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void save(User user) {
+        System.out.println("userService save...");
+        userMapper.insert(user);
+        int i = 1 / 0;
     }
 }

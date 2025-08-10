@@ -22,7 +22,7 @@ public class LimitInterceptor implements Interceptor{
         BoundSql boundSql = psh.getBoundSql();
 //        System.out.println("分页插件start");
         String sql = boundSql.getSql();
-        if (!sql.contains("LIMIT")) {
+        if (sql.contains("select") && !sql.contains("LIMIT")) {
             boundSql.setSql(sql +  " LIMIT 2");
         }
         Object result = invocation.proceed();
