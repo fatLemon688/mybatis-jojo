@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.7.0</version>
+            <version>2.7.18</version>
         </dependency>
 
         <!-- 生成配置元数据 - yml配置点击跳转 & 提示 -->
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>2.7.0</version>
+            <version>2.7.18</version>
             <optional>true</optional>
         </dependency>
         <!-- lombok插件 -->
