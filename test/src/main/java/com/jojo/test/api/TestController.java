@@ -1,6 +1,6 @@
 package com.jojo.test.api;
 
-import org.jojo.mybatis.demo.mapper.UserMapper;
+import com.jojo.test.mapper.DemoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @Autowired
-    private UserMapper userMapper;
+    private DemoMapper demoMapper;
 
     @GetMapping("/test")
     public Object test() {
-        return userMapper.findOne(1);
+        return demoMapper.findOne(1);
     }
 }

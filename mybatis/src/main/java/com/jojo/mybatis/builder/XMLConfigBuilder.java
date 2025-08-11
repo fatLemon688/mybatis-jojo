@@ -2,6 +2,7 @@ package com.jojo.mybatis.builder;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
 import com.jojo.mybatis.annotations.CacheNamespace;
 import com.jojo.mybatis.annotations.Delete;
@@ -45,13 +46,13 @@ public class XMLConfigBuilder {
         Configuration configuration = new Configuration();
         // 解析mapper
         parseMapper(configuration, "com.jojo.demo.mapper");
-        parseMapper(configuration, "org.jojo.mybatis.demo.mapper");
         parseMapperXml(configuration);
         return configuration;
     }
 
-    public Configuration parse(DataSource dataSource, Transaction transaction) {
+    public Configuration parse(DataSource dataSource, Transaction transaction, String mapper) {
         Configuration configuration = parse();
+        parseMapper(configuration, mapper);
         configuration.setDataSource(dataSource);
         configuration.setTransaction(transaction);
         return configuration;
@@ -59,6 +60,9 @@ public class XMLConfigBuilder {
 
     @SneakyThrows
     private void parseMapper(Configuration configuration, String packName) {
+        if (StrUtil.isBlank(packName)) {
+            return;
+        }
         // com.jojo.mybatis.demo.mapper
         Set<Class<?>> classes = ClassUtil.scanPackage(packName);
         for (Class<?> aClass : classes) {

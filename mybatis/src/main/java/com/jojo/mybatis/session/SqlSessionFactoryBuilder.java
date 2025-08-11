@@ -17,9 +17,9 @@ public class SqlSessionFactoryBuilder {
         return sessionFactory;
     }
 
-    public SqlSessionFactory build(DataSource dataSource, Transaction transaction) {
+    public SqlSessionFactory build(DataSource dataSource, Transaction transaction, String mapper) {
         XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder();
-        Configuration configuration = xmlConfigBuilder.parse(dataSource, transaction);
+        Configuration configuration = xmlConfigBuilder.parse(dataSource, transaction, mapper);
         DefaultSqlSessionFactory sessionFactory = new DefaultSqlSessionFactory(configuration);
         return sessionFactory;
     }

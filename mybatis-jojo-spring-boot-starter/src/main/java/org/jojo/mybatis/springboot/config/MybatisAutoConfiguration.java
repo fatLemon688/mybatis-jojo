@@ -29,8 +29,6 @@ import javax.sql.DataSource;
  *  测试
  */
 @EnableTransactionManagement
-@ComponentScan("org.jojo.mybatis.demo")
-@MapperScan("org.jojo.mybatis.demo.mapper")
 @EnableConfigurationProperties(MybatisConfigProperty.class)
 public class MybatisAutoConfiguration {
 
@@ -40,7 +38,7 @@ public class MybatisAutoConfiguration {
     @Bean
     public SqlSession sqlSession(DataSource dataSource) {
         String mapper = mybatisConfigProperty.getMapper();
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(dataSource, new SpringManagedTransaction(dataSource));
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(dataSource, new SpringManagedTransaction(dataSource), mapper);
         SqlSession sqlSession = sqlSessionFactory.openSession();
         return sqlSession;
     }
@@ -66,16 +64,5 @@ public class MybatisAutoConfiguration {
         DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
         transactionManager.setDataSource(dataSource);
         return transactionManager;
-    }
-
-    public static void main(String[] args) {
-        // Logback运行时动态更改日志级别
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        loggerContext.getLogger("ROOT").setLevel(Level.INFO);
-
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MybatisConfig.class);
-        UserService userService = context.getBean(UserService.class);
-        System.out.println(JSONUtil.toJsonStr(userService.findOne(2)));
-        userService.save(new User(6,  DateTime.now() + "jojo", 20));
     }
 }

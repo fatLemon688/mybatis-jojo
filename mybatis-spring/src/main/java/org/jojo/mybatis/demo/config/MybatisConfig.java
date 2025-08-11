@@ -31,7 +31,7 @@ import javax.sql.DataSource;
 public class MybatisConfig {
     @Bean
     public SqlSession sqlSession(DataSource dataSource) {
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(dataSource, new SpringManagedTransaction(dataSource));
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(dataSource, new SpringManagedTransaction(dataSource), "org.jojo.mybatis.demo.mapper");
         SqlSession sqlSession = sqlSessionFactory.openSession();
         return sqlSession;
     }
