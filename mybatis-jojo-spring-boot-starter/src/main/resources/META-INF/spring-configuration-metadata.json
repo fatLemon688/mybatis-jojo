@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "mybatis-jojo",
+      "type": "org.jojo.mybatis.springboot.config.MybatisConfigProperty",
+      "sourceType": "org.jojo.mybatis.springboot.config.MybatisConfigProperty"
+    }
+  ],
+  "properties": [
+    {
+      "name": "mybatis-jojo.mapper",
+      "type": "java.lang.String",
+      "sourceType": "org.jojo.mybatis.springboot.config.MybatisConfigProperty"
+    }
+  ],
+  "hints": []
+}

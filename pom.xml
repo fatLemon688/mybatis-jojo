@@ -12,7 +12,8 @@
   <modules>
     <module>mybatis</module>
     <module>mybatis-spring</module>
-      <module>mybatis-jojo-spring-boot-starter</module>
+    <module>mybatis-jojo-spring-boot-starter</module>
+    <module>test</module>
   </modules>
 
   <properties>
